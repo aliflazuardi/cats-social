@@ -6,30 +6,32 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/aliflazuardi/cats-social/configs"
+	"github.com/aliflazuardi/cats-social/internal/routes"
+
 	_ "github.com/lib/pq"
 )
 
 func main() {
 	fmt.Println("Welcome to Cats Social Application")
 
-	connStr := "dbname=cats_social_db user=admin password=admin123 sslmode=disable"
+	dbConfigs := configs.GetDBConfig()
+
+	connStr := fmt.Sprintf("dbname=%s user=%s password=%s %s", dbConfigs.DBName, dbConfigs.UserName, dbConfigs.Password, dbConfigs.Params)
+	fmt.Println(connStr)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	age := 21
-	rows, err := db.Query("SELECT name FROM users WHERE age = $1", age)
+	name := "alif"
+	rows, err := db.Query("SELECT name FROM users WHERE name = $1", name)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 	fmt.Println(rows)
 
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello Cats")
-	})
+	mux := routes.GetRoutesHandler()
 
 	if err := http.ListenAndServe("localhost:8080", mux); err != nil { // need to change to 8080 (got port clash now)
 		fmt.Println(err.Error())
