@@ -12,13 +12,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var DB *sql.DB
+
 func main() {
 	fmt.Println("Welcome to Cats Social Application")
 
 	dbConfigs := configs.GetDBConfig()
 
 	connStr := fmt.Sprintf("dbname=%s user=%s password=%s %s", dbConfigs.DBName, dbConfigs.UserName, dbConfigs.Password, dbConfigs.Params)
-	fmt.Println(connStr)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)

@@ -5,14 +5,16 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-	Email        string `json:"email"`
-	Password     string `json:"password"`
-	passwordHash string `json:"-"`
-	Name         string `json:"name,omitempty"`
+	UUID         uuid.UUID `json:"uuid"`
+	Email        string    `json:"email"`
+	Password     string    `json:"password"`
+	passwordHash string    `json:"-"`
+	Name         string    `json:"name,omitempty"`
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -30,10 +32,21 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
+	u.UUID = uuid.New()
+
 	fmt.Println(u)
 }
 
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 8)
 	return string(bytes), err
+}
+
+func compareHashWithPassword(password string) error {
+	hashedPassword, err := hashPassword(password)
+	if err != nil {
+		return err
+	}
+
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
