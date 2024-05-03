@@ -17,6 +17,10 @@ func (authHandler *AuthHandler) RegisterUserHandler(w http.ResponseWriter, r *ht
 	auth.Register(w, r)
 }
 
+func (authHandler *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	auth.Login(w, r)
+}
+
 type CatHandler struct{}
 
 type MatchHandler struct{}

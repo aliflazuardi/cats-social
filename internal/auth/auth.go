@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/aliflazuardi/cats-social/internal/repository"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -34,12 +35,15 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	u.UUID = uuid.New()
 
-	fmt.Println(u)
+	repository.FindUser()
 }
 
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 8)
 	return string(bytes), err
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func compareHashWithPassword(password string) error {

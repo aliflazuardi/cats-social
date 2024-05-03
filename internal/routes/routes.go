@@ -18,4 +18,5 @@ func GetRoutesHandler() *http.ServeMux {
 func getAuthHandler(mux *http.ServeMux, authHandler *server.AuthHandler) {
 	mux.HandleFunc("/", authHandler.HellowWorldHandler)
 	mux.HandleFunc("POST /v1/user/register", authHandler.RegisterUserHandler)
+	mux.HandleFunc("POST /v1/user/login", authHandler.LoginHandler)
 }
