@@ -20,10 +20,19 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// validate user request email format is correct
+	err = validateUser(u)
+	if err != nil {
+		fmt.Println("user values is incorrect")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	u.PasswordHash, err = hashPassword(u.Password)
 	if err != nil {
 		fmt.Println("error hashing password: ", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	u.UUID = uuid.New()
@@ -33,6 +42,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("error insert user to database: ", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 	}
+}
+
+func validateUser(u model.User) error {
+	if u.Email == "" {
+		return fmt.Errorf("email can't be empty")
+	}
+
+	return nil
 }
 
 func hashPassword(password string) (string, error) {
