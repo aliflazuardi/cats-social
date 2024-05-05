@@ -19,6 +19,19 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+  
+	user, err := repository.FindUser(u.Email)
+	if err != nil {
+		fmt.Println("error find user in database: ", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+  
+  if user.Email != "" {
+    fmt.Println("user already exist")
+    w.WriteHeader(http.StatusBadRequest)
+    return
+  }
 
 	// validate user request email format is correct
 	err = validateUser(u)
